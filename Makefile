@@ -2,8 +2,7 @@ CXX      = g++
 CC       = gcc
 CXXFLAGS = -Iinclude
 CFLAGS   = -Iinclude
-LIBS     = -lglfw3 -lopengl32 -lgdi32 -luser32
-
+LIBS  = -L/mingw64/lib -lglfw3 -lopengl32 -lgdi32 -luser32 -mconsole 
 TARGET = sim
 
 all: $(TARGET)
