@@ -1,8 +1,8 @@
 CXX      = g++
 CC       = gcc
-CXXFLAGS = -Iinclude $(shell pkg-config --cflags glfw3)
+CXXFLAGS = -Iinclude
 CFLAGS   = -Iinclude
-LIBS     = $(shell pkg-config --libs glfw3) -lopengl32 -lgdi32 -luser32
+LIBS     = /mingw64/lib/libglfw3.dll.a -lopengl32 -lgdi32 -luser32
 
 TARGET = sim
 
