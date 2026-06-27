@@ -64,7 +64,34 @@ void processInput(GLFWwindow *window) {
 // --- YOUR CUDA/HPC FUNCTIONS GO HERE ---
 // void init_framework() { ... }
 // void run_simulation_frame() { ... }
-// ---------------------------------------
+// ---------------------------------------\
+// This registers the OpenGL VBO so CUDA is allowed to access its memory space
+cudaGraphicsGLRegisterBuffer(&cuda_vbo_resource, VBO, cudaGraphicsRegisterFlagsNone);
+
+**2. The Loop (Inside `draw_frame`)**
+Before you call your `glDrawArrays` command, you map the memory, run your physics, and unmap it.
+```cpp
+void draw_frame() {
+    Vertex* d_vertex_ptr;
+    size_t num_bytes;
+
+    // A. Lock the VBO so OpenGL can't read it while we work
+    cudaGraphicsMapResources(1, &cuda_vbo_resource, 0);
+    
+    // B. Get the raw device pointer to the memory
+    cudaGraphicsResourceGetMappedPointer((void**)&d_vertex_ptr, &num_bytes, cuda_vbo_resource);
+    
+    // C. Launch your CUDA Kernel! 
+    // Example: modify_sphere_kernel<<<blocks, threads>>>(d_vertex_ptr, vertexCount);
+    
+    // D. Unlock the VBO
+    cudaGraphicsUnmapResources(1, &cuda_vbo_resource, 0);
+
+    // E. Standard OpenGL Drawing (your existing playground code)
+    glUseProgram(shaderProgram);
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+}
 
 int main() {
     // 1. Initialize GLFW and configure version (OpenGL 3.3 Core Profile)
