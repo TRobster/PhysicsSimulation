@@ -65,12 +65,26 @@ void processInput(GLFWwindow *window) {
 // void init_framework() { ... }
 // void run_simulation_frame() { ... }
 // ---------------------------------------\
+
+Vertex* circle;
+
+GLUint vID;
+glGenBuffers(1, &vID);
+glBindBuffer(GL_ARRAY_BUFFER, vID);
+
+glBufferData(
+    GL_ARRAY_BUFFER,    // The slot we bound our VBO to
+    sizeof(circle),   // Total size in bytes
+    circle,           // Pointer to your CPU-side array
+    GL_DYNAMIC_DRAM      // A hint to the GPU: "I will set this once and use it many times"
+);
+
 // This registers the OpenGL VBO so CUDA is allowed to access its memory space
 cudaGraphicsGLRegisterBuffer(&cuda_vbo_resource, VBO, cudaGraphicsRegisterFlagsNone);
-
+/*
 **2. The Loop (Inside `draw_frame`)**
 Before you call your `glDrawArrays` command, you map the memory, run your physics, and unmap it.
-```cpp
+*/
 void draw_frame() {
     Vertex* d_vertex_ptr;
     size_t num_bytes;
@@ -90,7 +104,7 @@ void draw_frame() {
     // E. Standard OpenGL Drawing (your existing playground code)
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+    glDrawArrays(GL_TRIANGLES, 0, vertexCount) ;
 }
 
 int main() {
